@@ -11,10 +11,10 @@
 <body style="background-color: gray;">
   <form name="form" action="savetimings.php" onsubmit="" method="POST">
       <label>Bus stop: </label>
-      <input type="text" id="user" name="user">
+      <input type="text" id="stop" name="stop">
       <br><br>
       <label>Time</label>
-      <input type="password" id="pass" name="pass">
+      <input type="text" id="time" name="time">
       <br><br>
       <input type="submit" id="btn" value="submit" name="submit">
   </form>
