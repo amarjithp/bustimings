@@ -1,0 +1,22 @@
+<?php 
+  include 'connection.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Timings</title>
+</head>
+<body style="background-color: gray;">
+  <form name="form" action="savetimings.php" onsubmit="" method="POST">
+      <label>Bus stop: </label>
+      <input type="text" id="user" name="user">
+      <br><br>
+      <label>Time</label>
+      <input type="password" id="pass" name="pass">
+      <br><br>
+      <input type="submit" id="btn" value="submit" name="submit">
+  </form>
+</body>
+</html>
