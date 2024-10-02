@@ -5,7 +5,10 @@
     $time = $_POST['time'];
 
     $sql = "INSERT INTO stop_times (stop_id, arrival_time) VALUES ('$stop', '$time')";
-    if (mysqli_query($conn, $sql)) {
+    $status = mysqli_query($conn, $sql);
+    /*
+    //print all stops
+    if ($status) {
       $sql = "SELECT stop_id, arrival_time FROM stop_times";
       $result = $conn->query($sql);
 
@@ -20,6 +23,8 @@
     } else {
       echo "Error: ".mysqli_error($conn);
     }
+    */
+    header("Location: index.php");
     mysqli_close($conn);
   }
 
