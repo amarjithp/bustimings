@@ -1,0 +1,6 @@
+#addbutton {
+  position: fixed;
+  top: 10px;  /* Distance from the top of the page */
+  right: 10px;  /* Distance from the right of the page */
+  color: aqua;
+}

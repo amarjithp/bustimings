@@ -1,7 +1,24 @@
 <?php 
   include 'connection.php';
 ?>
+
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Timings</title>
+</head>
+<body style="background-color: black;">
+  <button type="button" id="addbutton" style="position: absolute; top: 10px; right: 10px; 
+  background-color: gray; color: white; font-size: 20px;
+  padding: 12px; border-radius: 20px; font-family: sans-serif;">Add Bus Timings</button>
+
+  
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -20,10 +37,10 @@
   </form>
   <br>
   <form name="form1" action="searchtimings.php" onsubmit="" method="POST">
-      <label>Bus stop: </label>
+      <label>Bus stoop: </label>
       <input type="text" id="searchterm" name="searchterm">
       <br><br>
       <input type="submit" id="btn1" value="search" name="submit">
   </form>
 </body>
-</html>
+</html> -->
