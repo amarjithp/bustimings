@@ -1,0 +1,28 @@
+table {
+  width: 50%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+table, th, td {
+  border: 1px solid black;
+}
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+/* Style for Stop ID */
+.stop-id {
+ 
+  font-weight: bold;
+}
+
+/* Style for Arrival Time */
+.arrival-time {
+  font-weight: 500;
+}
+
+/* Style for Route */
+.route {
+  font-weight: 500;
+}

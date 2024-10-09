@@ -3,8 +3,9 @@
   if(isset($_POST['submit'])) {
     $stop = $_POST['stop'];
     $time = $_POST['time'];
+    $routes = $_POST['routes'];
 
-    $sql = "INSERT INTO stop_times (stop_id, arrival_time) VALUES ('$stop', '$time')";
+    $sql = "INSERT INTO stop_times (stop_id, arrival_time, routes) VALUES ('$stop', '$time', '$routes')";
     $status = mysqli_query($conn, $sql);
     /*
     //print all stops
