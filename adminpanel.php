@@ -4,8 +4,11 @@ include 'connection.php';
 
 // Check if a delete request was made
 if (isset($_GET['delete'])) {
-    $stop_id = $_GET['delete'];
-    $deleteQuery = "DELETE FROM stop_times WHERE stop_id = '$stop_id'";
+    $stop_id = $_GET['stop_id'];
+    $routes = $_GET['routes'];
+    $arrival_time = $_GET['arrival_time'];
+
+    $deleteQuery = "DELETE FROM stop_times WHERE stop_id = '$stop_id' AND routes = '$routes' AND arrival_time = '$arrival_time'";
     mysqli_query($conn, $deleteQuery);
     header("Location: adminpanel.php"); // Refresh the page after deletion
 }
@@ -181,8 +184,10 @@ $result = mysqli_query($conn, $query);
                             <button type="submit" name="edit" class="btn edit">Edit</button>
                         </form>
                         <form method="GET" action="adminpanel.php">
-                            <input type="hidden" name="delete" value="<?php echo $row['stop_id']; ?>">
-                            <button type="submit" class="btn delete" onclick="return confirm('Are you sure you want to delete this entry?')">Delete</button>
+                            <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
+                            <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
+                            <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
+                            <button type="submit" name="delete" class="btn delete" onclick="return confirm('Are you sure you want to delete this entry?')">Delete</button>
                         </form>
                     </td>
                 </tr>
