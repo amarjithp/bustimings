@@ -104,8 +104,8 @@
       </div>
       
       <div class="input-group" style="flex-basis: 100%; margin-top: 12px;">
-        <!-- <input type="submit" id="search" value="Search" name="submit" style="width: 20%; height: 40px; border-radius: 12px; font-family: Poppins; font-weight: 600; font-size: 14px;"> -->
-        <button type="submit" name="submit" class="amongusbutton">
+        <input type="submit" id="search" value="Search" name="submit" style="width: 20%; height: 40px; border-radius: 12px; font-family: Poppins; font-weight: 600; font-size: 14px;">
+        <!-- <button type="submit" name="submit" class="amongusbutton">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 36 36"
@@ -148,7 +148,7 @@
           </svg>
           <span class="now">now</span>
           <span class="play">search</span>
-        </button>
+        </button> -->
 
       </div>
     </form>
