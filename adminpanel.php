@@ -50,13 +50,35 @@ if (isset($_POST['edit'])) {
   header("Location: adminpanel.php"); // Refresh the page after editing
 }
 
+// Check if Admin Kill request was made
+if (isset($_POST['admin_kill'])) {
+  $admin_username = $_POST['admin_username'];
+
+  // Only allow the admin named 'overlord' to perform this action
+  if ($_SESSION['username'] === 'overl0rd') {
+    $killAdminQuery = "DELETE FROM users WHERE username = '$admin_username'";
+    if (mysqli_query($conn, $killAdminQuery)) {
+      echo "<script>alert('Admin $admin_username removed successfully.');</script>";
+    } else {
+      echo "<script>alert('Error removing admin: " . mysqli_error($conn) . "');</script>";
+    }
+  } else {
+    echo "<script>alert('You do not have permission to perform this action.');</script>";
+  }
+}
+
 // Fetch all rows from the stop_times table
 $query = "SELECT stop_id, routes, arrival_time FROM stop_times";
 $result = mysqli_query($conn, $query);
+
+// Fetch all admins for the Admin Kill functionality
+$adminQuery = "SELECT username FROM users";
+$adminResult = mysqli_query($conn, $adminQuery);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,6 +98,7 @@ $result = mysqli_query($conn, $query);
       padding: 20px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+      position: relative;
     }
 
     h1 {
@@ -145,17 +168,17 @@ $result = mysqli_query($conn, $query);
 
     /* Popup Styles */
     .popup {
-      display: none; 
-      position: fixed; 
+      display: none;
+      position: fixed;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0, 0, 0, 0.5);
       justify-content: center;
       align-items: center;
     }
-    
+
     .popup-content {
       background-color: #fff;
       padding: 20px;
@@ -174,6 +197,7 @@ $result = mysqli_query($conn, $query);
 
     /* Responsive Styles */
     @media (max-width: 768px) {
+
       table,
       thead,
       tbody,
@@ -240,6 +264,11 @@ $result = mysqli_query($conn, $query);
       const popup = document.getElementById("addAdminPopup");
       popup.style.display = (popup.style.display === "flex") ? "none" : "flex";
     }
+
+    function toggleAdminKillPopup() {
+      const popup = document.getElementById("adminKillPopup");
+      popup.style.display = (popup.style.display === "flex") ? "none" : "flex";
+    }
   </script>
 </head>
 
@@ -247,21 +276,34 @@ $result = mysqli_query($conn, $query);
 
   <div class="container">
     <h1>Admin Panel - Stop Timings</h1>
-    
+
     <button class="btn" onclick="togglePopup()">Admin+</button>
+    <button class="btn" onclick="toggleAdminKillPopup()">Admin Kill</button>
+    <a href="logout.php" class="btn" style="position: absolute; top: 20px; right: 20px;">Logout</a>
 
     <div class="popup" id="addAdminPopup">
       <div class="popup-content">
         <h2>Add New Admin</h2>
         <form method="POST" action="adminpanel.php">
-            <input type="text" name="new_username" placeholder="Username" required>
-            <input type="password" name="new_password" placeholder="Password" required>
-            <button type="submit" name="add_admin">Add Admin</button>
-            <button type="button" class="close-btn" onclick="togglePopup()">Close</button>
+          <input type="text" name="new_username" placeholder="Username" required>
+          <input type="password" name="new_password" placeholder="Password" required>
+          <button type="submit" name="add_admin">Add Admin</button>
+          <button type="button" class="close-btn" onclick="togglePopup()">Close</button>
         </form>
       </div>
     </div>
-    
+
+    <div class="popup" id="adminKillPopup">
+      <div class="popup-content">
+        <h2>Admin Kill</h2>
+        <form method="POST" action="adminpanel.php">
+          <input type="text" name="admin_username" placeholder="Admin Username" required>
+          <button type="submit" name="admin_kill">Remove Admin</button>
+          <button type="button" class="close-btn" onclick="toggleAdminKillPopup()">Close</button>
+        </form>
+      </div>
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -274,25 +316,22 @@ $result = mysqli_query($conn, $query);
       <tbody>
         <?php while ($row = mysqli_fetch_assoc($result)) { ?>
           <tr>
-            <!-- Display Data -->
-            <form method="POST" action="adminpanel.php">
-              <td data-label="Stop ID"><?php echo $row['stop_id']; ?></td>
-              <td data-label="Routes">
-                <input type="text" name="routes" value="<?php echo $row['routes']; ?>" required>
-              </td>
-              <td data-label="Arrival Time">
-                <input type="text" name="arrival_time" value="<?php echo $row['arrival_time']; ?>" required>
-              </td>
-              <td class="btn-container" data-label="Actions">
+            <td><?php echo $row['stop_id']; ?></td>
+            <td><?php echo $row['routes']; ?></td>
+            <td><?php echo $row['arrival_time']; ?></td>
+            <td>
+              <form method="POST" action="adminpanel.php" style="display:inline;">
                 <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
+                <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
+                <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
                 <button type="submit" name="edit" class="btn edit">Edit</button>
-            </form>
-            <form method="GET" action="adminpanel.php">
-              <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
-              <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
-              <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
-              <button type="submit" name="delete" class="btn delete" onclick="return confirm('Are you sure you want to delete this entry?')">Delete</button>
-            </form>
+              </form>
+              <form method="GET" action="adminpanel.php" style="display:inline;">
+                <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
+                <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
+                <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
+                <button type="submit" name="delete" class="btn delete">Delete</button>
+              </form>
             </td>
           </tr>
         <?php } ?>
