@@ -20,6 +20,24 @@ if (isset($_GET['delete'])) {
   header("Location: adminpanel.php"); // Refresh the page after deletion
 }
 
+// Check if the add admin form was submitted
+if (isset($_POST['add_admin'])) {
+  $new_username = $_POST['new_username'];
+  $new_password = $_POST['new_password'];
+
+  // Hash the password for security
+  $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+  // Insert the new admin into the database
+  $addAdminQuery = "INSERT INTO users (username, password) VALUES ('$new_username', '$hashed_password')";
+  
+  if (mysqli_query($conn, $addAdminQuery)) {
+      echo "<p>New admin added successfully.</p>";
+  } else {
+      echo "<p>Error adding admin: " . mysqli_error($conn) . "</p>";
+  }
+}
+
 // Check if an edit request was made
 if (isset($_POST['edit'])) {
   $stop_id = $_POST['stop_id'];
@@ -196,7 +214,13 @@ $result = mysqli_query($conn, $query);
   <div class="container">
     <h1>Admin Panel - Stop Timings</h1>
     
-
+    <h2>Add New Admin</h2>
+    <form method="POST" action="adminpanel.php">
+        <input type="text" name="new_username" placeholder="Username" required>
+        <input type="password" name="new_password" placeholder="Password" required>
+        <button type="submit" name="add_admin">Add Admin</button>
+    </form>
+    
     <table>
       <thead>
         <tr>
