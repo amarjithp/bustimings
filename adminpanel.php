@@ -6,6 +6,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
   header("Location: login.php"); // Redirect to login page if not logged in
   exit;
 }
+
 // Include the database connection file
 include 'connection.php';
 
@@ -30,11 +31,11 @@ if (isset($_POST['add_admin'])) {
 
   // Insert the new admin into the database
   $addAdminQuery = "INSERT INTO users (username, password) VALUES ('$new_username', '$hashed_password')";
-  
+
   if (mysqli_query($conn, $addAdminQuery)) {
-      echo "<p>New admin added successfully.</p>";
+    echo "<script>alert('New admin added successfully.');</script>";
   } else {
-      echo "<p>Error adding admin: " . mysqli_error($conn) . "</p>";
+    echo "<script>alert('Error adding admin: " . mysqli_error($conn) . "');</script>";
   }
 }
 
@@ -56,7 +57,6 @@ $result = mysqli_query($conn, $query);
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -143,9 +143,37 @@ $result = mysqli_query($conn, $query);
       display: inline;
     }
 
+    /* Popup Styles */
+    .popup {
+      display: none; 
+      position: fixed; 
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .popup-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .close-btn {
+      background-color: #FF4C4C;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
     /* Responsive Styles */
     @media (max-width: 768px) {
-
       table,
       thead,
       tbody,
@@ -207,6 +235,12 @@ $result = mysqli_query($conn, $query);
       }
     }
   </style>
+  <script>
+    function togglePopup() {
+      const popup = document.getElementById("addAdminPopup");
+      popup.style.display = (popup.style.display === "flex") ? "none" : "flex";
+    }
+  </script>
 </head>
 
 <body>
@@ -214,12 +248,19 @@ $result = mysqli_query($conn, $query);
   <div class="container">
     <h1>Admin Panel - Stop Timings</h1>
     
-    <h2>Add New Admin</h2>
-    <form method="POST" action="adminpanel.php">
-        <input type="text" name="new_username" placeholder="Username" required>
-        <input type="password" name="new_password" placeholder="Password" required>
-        <button type="submit" name="add_admin">Add Admin</button>
-    </form>
+    <button class="btn" onclick="togglePopup()">Admin+</button>
+
+    <div class="popup" id="addAdminPopup">
+      <div class="popup-content">
+        <h2>Add New Admin</h2>
+        <form method="POST" action="adminpanel.php">
+            <input type="text" name="new_username" placeholder="Username" required>
+            <input type="password" name="new_password" placeholder="Password" required>
+            <button type="submit" name="add_admin">Add Admin</button>
+            <button type="button" class="close-btn" onclick="togglePopup()">Close</button>
+        </form>
+      </div>
+    </div>
     
     <table>
       <thead>
