@@ -195,69 +195,153 @@ $adminResult = mysqli_query($conn, $adminQuery);
       border-radius: 4px;
     }
 
-    /* Responsive Styles */
-    @media (max-width: 768px) {
+    /* Global Styles */
 
-      table,
-      thead,
-      tbody,
-      th,
-      td,
-      tr {
-        display: block;
-        width: 100%;
-      }
+.container {
+  width: 90%;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  position: relative;
+}
 
-      thead tr {
-        display: none;
-      }
+/* Desktop and Tablet Styles (default) */
 
-      tr {
-        margin-bottom: 15px;
-        border-bottom: 2px solid #ddd;
-      }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-      td {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-        position: relative;
-      }
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
 
-      td:before {
-        content: attr(data-label);
-        font-weight: bold;
-        text-transform: uppercase;
-        flex-basis: 30%;
-        color: #4CAF50;
-      }
+th {
+  background-color: #4CAF50;
+  color: white;
+}
 
-      .btn-container {
-        flex-direction: column;
-        gap: 10px;
-      }
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
 
-      .btn {
-        width: 100%;
-        margin-left: 0;
-        padding: 10px;
-        text-align: center;
-      }
-    }
+tr:hover {
+  background-color: #ddd;
+}
 
-    @media (max-width: 480px) {
-      .container {
-        width: 100%;
-        margin: 20px;
-        padding: 10px;
-      }
+.btn-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+  text-decoration: none;
+}
+
+.edit-btn,
+.save-btn,
+.delete-btn {
+  padding: 8px 15px;
+}
+
+/* Responsive Styles */
+
+/* Tablet (768px - 991px) */
+@media (max-width: 991px) {
+  .container {
+    margin: 30px auto;
+  }
+  table th,
+  table td {
+    padding: 8px;
+  }
+}
+
+/* Mobile (480px - 767px) */
+@media (max-width: 767px) {
+  .container {
+    margin: 20px auto;
+    padding: 15px;
+  }
+  table {
+    border: 0;
+  }
+  table caption {
+    font-size: 1.3em;
+  }
+  table thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  table tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: 0.625em;
+  }
+  table td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: 0.8em;
+    text-align: right;
+  }
+  table td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  table td:last-child {
+    border-bottom: 0;
+  }
+  .btn-container {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .btn {
+    margin-left: 0;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+}
+
+/* Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .container {
+    width: 95%;
+    margin: 15px auto;
+    padding: 10px;
+  }
+  table td {
+    font-size: 0.7em;
+  }
+  .btn {
+    padding: 6px 12px;
+  }
+}
+
 
       h1 {
         font-size: 24px;
       }
-    }
+    
   </style>
   <script>
     function togglePopup() {
@@ -270,6 +354,7 @@ $adminResult = mysqli_query($conn, $adminQuery);
       popup.style.display = (popup.style.display === "flex") ? "none" : "flex";
     }
   </script>
+  <link rel="stylesheet" href="adminpanel.css">
 </head>
 
 <body>
@@ -279,7 +364,7 @@ $adminResult = mysqli_query($conn, $adminQuery);
 
     <button class="btn" onclick="togglePopup()">Admin+</button>
     <button class="btn" onclick="toggleAdminKillPopup()">Admin Kill</button>
-    <a href="logout.php" class="btn" style="position: absolute; top: 20px; right: 20px;">Logout</a>
+    <a href="logout.php" class="btn" style="top: 20px; right: 20px;">Logout</a>
 
     <div class="popup" id="addAdminPopup">
       <div class="popup-content">
@@ -304,39 +389,73 @@ $adminResult = mysqli_query($conn, $adminQuery);
       </div>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Stop ID</th>
-          <th>Routes</th>
-          <th>Arrival Time</th>
-          <th>Actions</th>
+
+  <table id="stop-timings-table">
+    <thead>
+      <tr>
+        <th>Stop ID</th>
+        <th>Routes</th>
+        <th>Arrival Time</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+        <tr data-stop-id="<?php echo $row['stop_id']; ?>">
+          <td class="stop-id"><?php echo $row['stop_id']; ?></td>
+          <td class="routes" contenteditable="false"><?php echo $row['routes']; ?></td>
+          <td class="arrival-time" contenteditable="false"><?php echo $row['arrival_time']; ?></td>
+          <td>
+            <button class="btn edit-btn" onclick="toggleEdit(this)">Edit</button>
+            <button class="btn save-btn" style="display: none;" onclick="saveEdits(this)">Save</button>
+            <form method="GET" action="adminpanel.php" style="display:inline;">
+              <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
+              <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
+              <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
+              <button type="submit" name="delete" class="btn delete-btn">Delete</button>
+            </form>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-          <tr>
-            <td><?php echo $row['stop_id']; ?></td>
-            <td><?php echo $row['routes']; ?></td>
-            <td><?php echo $row['arrival_time']; ?></td>
-            <td>
-              <form method="POST" action="adminpanel.php" style="display:inline;">
-                <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
-                <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
-                <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
-                <button type="submit" name="edit" class="btn edit">Edit</button>
-              </form>
-              <form method="GET" action="adminpanel.php" style="display:inline;">
-                <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
-                <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
-                <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
-                <button type="submit" name="delete" class="btn delete">Delete</button>
-              </form>
-            </td>
-          </tr>
-        <?php } ?>
-      </tbody>
-    </table>
+      <?php } ?>
+    </tbody>
+  </table>
+
+  <script>
+    function toggleEdit(editBtn) {
+      const row = editBtn.closest('tr');
+      const routesCell = row.querySelector('.routes');
+      const arrivalTimeCell = row.querySelector('.arrival-time');
+      const saveBtn = row.querySelector('.save-btn');
+
+      routesCell.setAttribute('contenteditable', 'true');
+      arrivalTimeCell.setAttribute('contenteditable', 'true');
+      editBtn.style.display = 'none';
+      saveBtn.style.display = 'inline-block';
+    }
+
+    function saveEdits(saveBtn) {
+      const row = saveBtn.closest('tr');
+      const stopId = row.getAttribute('data-stop-id');
+      const routesCell = row.querySelector('.routes');
+      const arrivalTimeCell = row.querySelector('.arrival-time');
+      const editBtn = row.querySelector('.edit-btn');
+
+      const updatedRoutes = routesCell.textContent;
+      const updatedArrivalTime = arrivalTimeCell.textContent;
+
+      // Send AJAX request to update database
+      fetch(`update-stop-timing.php?stop_id=${stopId}&routes=${updatedRoutes}&arrival_time=${updatedArrivalTime}`)
+        .then(response => response.text())
+        .then(message => console.log(message))
+        .catch(error => console.error('Error:', error));
+
+      routesCell.setAttribute('contenteditable', 'false');
+      arrivalTimeCell.setAttribute('contenteditable', 'false');
+      saveBtn.style.display = 'none';
+      editBtn.style.display = 'inline-block';
+    }
+  </script>
+
   </div>
 
 </body>
