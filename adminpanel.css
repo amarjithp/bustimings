@@ -1,0 +1,10 @@
+/* Responsive Table */
+#stop-timings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#stop-timings-table th,
+#stop-timings-table td {
+  border: 1px solid #ddd;
+}
