@@ -1,6 +1,6 @@
 <?php
 // Database connection
-$host = 'localhost';
+$host = 'localhost1';
 $dbname = 'bustimings';
 $user = 'root';
 $pass = '';
