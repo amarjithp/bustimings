@@ -41,34 +41,41 @@ if (isset($_POST['add_admin'])) {
 
 // Check if an edit request was made
 if (isset($_POST['edit'])) {
-  $stop_id = $_POST['stop_id'];
-  $routes = $_POST['routes'];
-  $arrival_time = $_POST['arrival_time']; // Treat arrival_time as string
+    $id = $_POST['id'];
+    $routes = $_POST['routes'];
+    $arrival_time = $_POST['arrival_time']; // Treat arrival_time as string
 
-  $updateQuery = "UPDATE stop_times SET routes = '$routes', arrival_time = '$arrival_time' WHERE stop_id = '$stop_id'";
-  mysqli_query($conn, $updateQuery);
-  header("Location: adminpanel.php"); // Refresh the page after editing
+    // Use prepared statement to prevent SQL injection
+    $updateQuery = "UPDATE stop_times SET routes = ?, arrival_time = ? WHERE id = ?";
+    $stmt = $conn->prepare($updateQuery);
+    $stmt->bind_param("ssi", $routes, $arrival_time, $id);
+    $stmt->execute();
+    $stmt->close();
+
+    header("Location: adminpanel.php"); // Refresh the page after editing
 }
 
 // Check if Admin Kill request was made
 if (isset($_POST['admin_kill'])) {
-  $admin_username = $_POST['admin_username'];
+    $admin_username = $_POST['admin_username'];
 
-  // Only allow the admin named 'overlord' to perform this action
-  if ($_SESSION['username'] === 'overl0rd') {
-    $killAdminQuery = "DELETE FROM users WHERE username = '$admin_username'";
-    if (mysqli_query($conn, $killAdminQuery)) {
-      echo "<script>alert('Admin $admin_username removed successfully.');</script>";
+    // Only allow the admin named 'overlord' to perform this action
+    if ($_SESSION['username'] === 'overl0rd') {
+        $killAdminQuery = "DELETE FROM users WHERE username = ?";
+        $stmt = $conn->prepare($killAdminQuery);
+        $stmt->bind_param("s", $admin_username);
+        $stmt->execute();
+        $stmt->close();
+
+        echo "<script>alert('Admin $admin_username removed successfully.');</script>";
     } else {
-      echo "<script>alert('Error removing admin: " . mysqli_error($conn) . "');</script>";
+        echo "<script>alert('You do not have permission to perform this action.');</script>";
     }
-  } else {
-    echo "<script>alert('You do not have permission to perform this action.');</script>";
-  }
 }
 
+
 // Fetch all rows from the stop_times table
-$query = "SELECT stop_id, routes, arrival_time FROM stop_times";
+$query = "SELECT id, stop_id, routes, arrival_time FROM stop_times";
 $result = mysqli_query($conn, $query);
 
 // Fetch all admins for the Admin Kill functionality
@@ -393,6 +400,7 @@ tr:hover {
   <table id="stop-timings-table">
     <thead>
       <tr>
+        <th>Id</th>
         <th>Stop ID</th>
         <th>Routes</th>
         <th>Arrival Time</th>
@@ -400,24 +408,23 @@ tr:hover {
       </tr>
     </thead>
     <tbody>
-      <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-        <tr data-stop-id="<?php echo $row['stop_id']; ?>">
-          <td class="stop-id"><?php echo $row['stop_id']; ?></td>
-          <td class="routes" contenteditable="false"><?php echo $row['routes']; ?></td>
-          <td class="arrival-time" contenteditable="false"><?php echo $row['arrival_time']; ?></td>
-          <td>
-            <button class="btn edit-btn" onclick="toggleEdit(this)">Edit</button>
-            <button class="btn save-btn" style="display: none;" onclick="saveEdits(this)">Save</button>
-            <form method="GET" action="adminpanel.php" style="display:inline;">
-              <input type="hidden" name="stop_id" value="<?php echo $row['stop_id']; ?>">
-              <input type="hidden" name="routes" value="<?php echo $row['routes']; ?>">
-              <input type="hidden" name="arrival_time" value="<?php echo $row['arrival_time']; ?>">
-              <button type="submit" name="delete" class="btn delete-btn">Delete</button>
-            </form>
-          </td>
-        </tr>
-      <?php } ?>
-    </tbody>
+  <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+    <tr>
+      <td class="id"><?php echo $row['id']; ?></td> <!-- Use the 'id' column here -->
+      <td class="stop-id"><?php echo $row['stop_id']; ?></td>
+      <td class="routes" contenteditable="false"><?php echo $row['routes']; ?></td>
+      <td class="arrival-time" contenteditable="false"><?php echo $row['arrival_time']; ?></td>
+      <td>
+        <button class="btn edit-btn" onclick="toggleEdit(this)">Edit</button>
+        <button class="btn save-btn" style="display: none;" onclick="saveEdits(this)">Save</button>
+        <form method="GET" action="adminpanel.php" style="display:inline;">
+          <input type="hidden" name="id" value="<?php echo $row['id']; ?>"> <!-- Use 'id' for deletion -->
+          <button type="submit" name="delete" class="btn delete-btn">Delete</button>
+        </form>
+      </td>
+    </tr>
+  <?php } ?>
+</tbody>
   </table>
 
   <script>
@@ -434,26 +441,32 @@ tr:hover {
     }
 
     function saveEdits(saveBtn) {
-      const row = saveBtn.closest('tr');
-      const stopId = row.getAttribute('data-stop-id');
-      const routesCell = row.querySelector('.routes');
-      const arrivalTimeCell = row.querySelector('.arrival-time');
-      const editBtn = row.querySelector('.edit-btn');
+  const row = saveBtn.closest('tr');
+  const id = row.querySelector('.id').textContent; // Use 'id' column value
+  const routesCell = row.querySelector('.routes');
+  const arrivalTimeCell = row.querySelector('.arrival-time');
+  const editBtn = row.querySelector('.edit-btn');
 
-      const updatedRoutes = routesCell.textContent;
-      const updatedArrivalTime = arrivalTimeCell.textContent;
+  const updatedRoutes = routesCell.textContent;
+  const updatedArrivalTime = arrivalTimeCell.textContent;
 
-      // Send AJAX request to update database
-      fetch(`update-stop-timing.php?stop_id=${stopId}&routes=${updatedRoutes}&arrival_time=${updatedArrivalTime}`)
-        .then(response => response.text())
-        .then(message => console.log(message))
-        .catch(error => console.error('Error:', error));
+  // Send AJAX request to update database using 'id' instead of 'stop_id'
+  fetch(`update-stop-timing.php?id=${id}&routes=${updatedRoutes}&arrival_time=${updatedArrivalTime}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "success") {
+        console.log(data.message); // Success message
+      } else {
+        console.error(data.message); // Error message
+      }
+    })
+    .catch(error => console.error('Error:', error));
 
-      routesCell.setAttribute('contenteditable', 'false');
-      arrivalTimeCell.setAttribute('contenteditable', 'false');
-      saveBtn.style.display = 'none';
-      editBtn.style.display = 'inline-block';
-    }
+  routesCell.setAttribute('contenteditable', 'false');
+  arrivalTimeCell.setAttribute('contenteditable', 'false');
+  saveBtn.style.display = 'none';
+  editBtn.style.display = 'inline-block';
+}
   </script>
 
   </div>
