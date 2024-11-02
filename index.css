@@ -11,16 +11,30 @@ body {
 }
 
 .context {
-    width: 100%;
-    position: absolute;
-    top: 20vh; /* Adjust top position for better visibility */
+  width: 100%;
+  position: absolute;
+  top: 4vh; /* Adjust top position for better visibility */
 }
 
 .context h1 {
+    font-family: 'Dancing Script', cursive;
     text-align: center;
     color: #fff;
-    font-size: 50px;
+    font-size: 5vw;
 }
+
+@media (max-width: 1200px) {
+  .context h1 {
+      font-size: 45px; /* Max size for larger screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .context h1 {
+      font-size: 30px; /* Adjust for smaller screens */
+  }
+}
+
 
 .area {
     background: #4e54c8;  
@@ -140,16 +154,37 @@ body {
 
 /* Button and form styles */
 .add-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: white;
-    color: black;
-    font-size: 20px;
-    font-weight: 600;
-    padding: 12px;
-    border-radius: 20px;
+  position: absolute;
+  top: 5vh; /* Adjust the vertical position for responsiveness */
+  right: 5vw; /* Use viewport width to ensure responsiveness */
+  background-color: white;
+  color: black;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 20px;
+  transition: background-color 0.3s ease; /* Smooth background color transition */
 }
+
+@media (max-width: 576px) {
+  .add-button {
+      top: 80px; /* Adjust position for small screens */
+      font-size: 14px; /* Smaller font size */
+      padding: 8px;
+  }
+}
+
+.add-button:hover {
+  background-color: #f0f0f0; /* Lighten background on hover */
+}
+
+@media (max-width: 600px) {
+  .add-button {
+      font-size: 16px; /* Smaller font size for mobile */
+      padding: 10px; /* Adjust padding */
+  }
+}
+
 
 .search-container {
     position: absolute;
