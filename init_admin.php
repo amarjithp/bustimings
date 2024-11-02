@@ -24,9 +24,9 @@ try {
 
     // Execute the query
     if ($stmt->execute()) {
-        echo "User added successfully!";
+        echo "Admin added successfully!";
     } else {
-        echo "Error adding user.";
+        echo "Error adding Admin.";
     }
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();

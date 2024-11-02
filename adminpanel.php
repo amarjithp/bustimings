@@ -11,15 +11,16 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 include 'connection.php';
 
 // Check if a delete request was made
+// Check if a delete request was made
 if (isset($_GET['delete'])) {
-  $stop_id = $_GET['stop_id'];
-  $routes = $_GET['routes'];
-  $arrival_time = $_GET['arrival_time'];
+  $id = $_GET['id']; // Retrieve the row's unique id
 
-  $deleteQuery = "DELETE FROM stop_times WHERE stop_id = '$stop_id' AND routes = '$routes' AND arrival_time = '$arrival_time'";
+  // Use id only to delete the specific row
+  $deleteQuery = "DELETE FROM stop_times WHERE id = '$id'";
   mysqli_query($conn, $deleteQuery);
   header("Location: adminpanel.php"); // Refresh the page after deletion
 }
+
 
 // Check if the add admin form was submitted
 if (isset($_POST['add_admin'])) {
@@ -418,9 +419,10 @@ tr:hover {
         <button class="btn edit-btn" onclick="toggleEdit(this)">Edit</button>
         <button class="btn save-btn" style="display: none;" onclick="saveEdits(this)">Save</button>
         <form method="GET" action="adminpanel.php" style="display:inline;">
-          <input type="hidden" name="id" value="<?php echo $row['id']; ?>"> <!-- Use 'id' for deletion -->
+          <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
           <button type="submit" name="delete" class="btn delete-btn">Delete</button>
         </form>
+
       </td>
     </tr>
   <?php } ?>
