@@ -30,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $stmt->close();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -43,14 +42,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <div class="container">
-        <h1>Admin Login</h1>
-        <?php if (isset($error)) { echo "<p class='error'>$error</p>"; } ?>
-        <form method="POST" action="">
-            <label for="admin_id">Admin ID</label>
-            <input type="text" id="admin_id" name="admin_id" required>
-            <label for="admin_pass">Password</label>
-            <input type="password" id="admin_pass" name="admin_pass" required>
-            <button type="submit">Login</button>
+        <form class="form" method="POST" action="">
+            <div class="control">
+                <h1>Admin Login</h1>
+            </div>
+            <?php if (isset($error)) { echo "<p class='error'>$error</p>"; } ?>
+            <div class="control block-cube block-input">
+                <input type="text" id="admin_id" name="admin_id" required placeholder="Admin ID">
+                <div class="bg-top">
+                    <div class="bg-inner"></div>
+                </div>
+                <div class="bg-right">
+                    <div class="bg-inner"></div>
+                </div>
+                <div class="bg">
+                    <div class="bg-inner"></div>
+                </div>
+            </div>
+            <div class="control block-cube block-input">
+                <input type="password" id="admin_pass" name="admin_pass" required placeholder="Password">
+                <div class="bg-top">
+                    <div class="bg-inner"></div>
+                </div>
+                <div class="bg-right">
+                    <div class="bg-inner"></div>
+                </div>
+                <div class="bg">
+                    <div class="bg-inner"></div>
+                </div>
+            </div>
+            <button class="btn block-cube block-cube-hover" type="submit">
+                <div class="bg-top">
+                    <div class="bg-inner"></div>
+                </div>
+                <div class="bg-right">
+                    <div class="bg-inner"></div>
+                </div>
+                <div class="bg">
+                    <div class="bg-inner"></div>
+                </div>
+                <div class="text">Log In</div>
+            </button>
         </form>
     </div>
 </body>
