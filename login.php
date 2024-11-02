@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (password_verify($password, $row['password'])) {
                 $_SESSION['loggedin'] = true; // Set session variable
                 $_SESSION['username'] = $username; // Store username in session
-                header("Location: adminpanel.php"); // Redirect to admin panel
+                header("Location: moderators.php"); // Redirect to admin panel
                 exit;
             } else {
                 $error = "Invalid username or password!";
