@@ -11,9 +11,10 @@
 
     // SQL for creating users table
     $sql2 = "CREATE TABLE users (
-        username VARCHAR(30),
-        password VARCHAR(255)
+      username VARCHAR(30) UNIQUE,
+      password VARCHAR(255)
     )";
+  
 
     // Execute the first query
     $status1 = mysqli_query($conn, $sql1);

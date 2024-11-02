@@ -20,12 +20,28 @@ if (isset($_GET['delete'])) {
 // Check if an add request was made
 if (isset($_POST['add'])) {
   $username = $_POST['username'];
-  $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
-  $insertQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
-  $stmt = $conn->prepare($insertQuery);
-  $stmt->bind_param("ss", $username, $password);
+
+  // Check if the username already exists
+  $checkQuery = "SELECT username FROM users WHERE username = ?";
+  $stmt = $conn->prepare($checkQuery);
+  $stmt->bind_param("s", $username);
   $stmt->execute();
-  $stmt->close();
+  $stmt->store_result();
+
+  if ($stmt->num_rows > 0) {
+    // Username already exists
+    echo "<script>alert('Username already exists. Please choose a different username.');</script>";
+  } else {
+    // Proceed to add the new moderator
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
+    $insertQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
+    $stmt = $conn->prepare($insertQuery);
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $stmt->close();
+  }
+
+  $stmt->close(); // Close the check query statement
 }
 
 // Fetch all moderators
@@ -45,7 +61,12 @@ $result = mysqli_query($conn, $query);
 
 <body>
   <div class="container">
-    <h1>Admin Panel</h1>
+    <div class="header">
+      <h1>Admin Panel</h1>
+      <form action="adminlogout.php" method="POST" class="logout-form">
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
+    </div>
     <h2>Moderators</h2>
 
     <form method="POST" action="">
