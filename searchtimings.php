@@ -17,7 +17,7 @@
   <title>Search Results</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="searchtimings.css">
 
   <!-- fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
