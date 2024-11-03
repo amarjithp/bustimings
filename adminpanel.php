@@ -41,7 +41,7 @@ if (isset($_POST['add'])) {
     $stmt->close();
   }
 
-  $stmt->close(); // Close the check query statement
+  // Close the check query statement
 }
 
 // Fetch all moderators
