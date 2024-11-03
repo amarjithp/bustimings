@@ -37,8 +37,7 @@ body {
 
 
 .area {
-    background: #4e54c8;  
-    background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);  
+    background: linear-gradient(to left, #8f94fb, #4e54c8);
     width: 100%;
     height: 100vh;
     position: relative; /* For absolute positioning of children */
@@ -204,6 +203,7 @@ body {
 .input-group {
     flex: 1; /* Allows the input groups to grow equally */
     min-width: 250px; /* Minimum width for small screens */
+    color: white;
 }
 
 input[type="text"] {
